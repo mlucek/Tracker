@@ -14,9 +14,15 @@ enum Engine{
     SecondEngine
 };
 
+enum Availability{
+    Disenable,
+    Enable
+};
+
 void togglepin(int pinNumber);
 
 void EngineDriver_Init();
 void ChangeDirection(int Engine);
 /*angle in degrees */
 void RunFirstEngine(float angle);
+void Disable_EnableEngine(int Engine, int Availability);
