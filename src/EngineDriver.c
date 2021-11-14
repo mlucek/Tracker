@@ -54,7 +54,7 @@ void RunFirstEngine(float angle) //TODO: Check if this code working in normal en
 {
     int Steps = (angle / 360) * STEPINCYCLE;
     printf("Ilość krókw = %d\n", Steps);
-    for (size_t i = 0; i == 400; i++)
+    for (size_t i = 0; i < 400; i++)
     {
         togglepin(FirstEnginePul);
         delay(75); //To turn around ~30 sec
