@@ -1,6 +1,7 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <inttypes.h>
+#include <math.h>
 #include "AccelerometerMPU9250A.h"
 
 int fd;
@@ -22,6 +23,7 @@ void MPU9520A_Init()
     if(fd)
     {
         MPU9520A_set_G_parameter(ACCEL_FS_SEL_2G);
+        MPU9520A_write(ACCEL_CONFIG_2, 0b00001110);
     }
     else
     {
@@ -41,33 +43,39 @@ void MPU9520A_set_G_parameter(int g_param)
 int MPU9520A_READ_AXIS(int Axie)
 {
     int16_t g =0;
+    int16_t g2 = 0;
     switch (Axie)
     {
     case AXIE_X:
         g = MPU9520A_read(ACCEL_XOUT_H);
+        g2 = MPU9520A_read(ACCEL_XOUT_L);
         break;
     case AXIE_Y:
         g = MPU9520A_read(ACCEL_YOUT_H);
+        g2 = MPU9520A_read(ACCEL_YOUT_L);
         break;
     case AXIE_Z:
         g = MPU9520A_read(ACCEL_ZOUT_H);
+        g2 = MPU9520A_read(ACCEL_ZOUT_L);
         break;
     default:
         break;
     }
-    g = g <<8;
+    g = g <<8 | g2;
     return g;
 }
 
 
-float MPU9520A_READ_AXIS_IN_G(int Axie)
+double MPU9520A_READ_AXIS_IN_G(int Axie)
 {
     uint8_t x =0;
-    float acceleration = MPU9520A_READ_AXIS(Axie);
-    float g = 0;
+    double acceleration = 0;
+    double g = 0;
+    double sum =0;
+    double average_counter =20;
     x = MPU9520A_read(ACCEL_CONFIG);
     x = (~ACCEL_FS_MASK & x);
-    float divisor = 1;
+    double divisor = 1;
     switch (x)
     {
     case ACCEL_FS_SEL_2G:
@@ -85,6 +93,31 @@ float MPU9520A_READ_AXIS_IN_G(int Axie)
     default:
         break;
     }
-    g = acceleration/divisor;
-    return g;
+    for(int i=0;i <average_counter;i++)
+    {
+        acceleration = MPU9520A_READ_AXIS(Axie);
+        g = acceleration/divisor;
+        sum += g;
+    }
+    return sum/average_counter;
+}
+
+
+double MPU9520A_YZ_AXIS_IN_DEGREE()
+{
+    long double x = 0;
+    x = MPU9520A_READ_AXIS_IN_G(AXIE_Y);
+    double z = MPU9520A_READ_AXIS_IN_G(AXIE_Z);
+    if (x >= 1) x = 1;
+    if (z >= 1) z = 1;
+    double sinalfa = asin(x);
+    double in_degree = ((sinalfa *360)/(2*M_PI));
+    printf("Kąt w stopniach sin: %f\n", in_degree);
+    double cosalfa = acos(z);
+    double in_degree2 = ((cosalfa *360)/(2*M_PI));
+    printf("Kąt w stopniach cos: %f\n", in_degree2);
+    double tgalfa = atan2(x, z);
+    double in_degree3 = ((tgalfa *360)/(2*M_PI));
+    printf("Kąt w stopniach tg: %f\n", in_degree3);
+    return in_degree3;
 }

@@ -37,4 +37,5 @@ int MPU9520A_read(int Reg_adress);
 void MPU9520A_write(int Reg_adress, int Data);
 void MPU9520A_set_G_parameter(int g_param);
 int MPU9520A_READ_AXIS(int Axie);
-float MPU9520A_READ_AXIS_IN_G(int Axie);
+double MPU9520A_READ_AXIS_IN_G(int Axie);
+double MPU9520A_YZ_AXIS_IN_DEGREE();
