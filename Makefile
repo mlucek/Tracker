@@ -26,7 +26,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS += -Wall
 CPPFLAGS += $(INC_FLAGS) -MMD -MP
 
-LDINC := -lwiringPi -lm
+LDINC := -lwiringPi -lm -lpthread
 
 # The final build step.
 $(TARGET_EXEC): $(OBJS)
