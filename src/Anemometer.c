@@ -4,8 +4,8 @@
 
 void cleanup(int signo)
 {
-    pinMode(ANE_PIN, INPUT);                //TODO: Check this
-    pullUpDnControl(ANE_PIN, PUD_OFF); 
+    pinMode(ANE_PIN, OUTPUT);                //TODO: Check this
+    pullUpDnControl(ANE_PIN, PUD_UP); 
     exit(0);
 }
 
@@ -17,9 +17,8 @@ void check_Anemometer_speed()
     static int timediffnstab[NUMBER_OF_MEASUREMENT];
     long int sumoftimemesurements = 0;
     long int sumoftimemesurementns = 0;
-    float scoreofdivides = 0;
-    int scoreofdividens = 0;
     float averagemeasurementtime = 0;
+    float averagewindspeed = 0;
     static int start = 0;
     static struct timespec lastCall;
     struct timespec thiscall;
@@ -42,7 +41,6 @@ void check_Anemometer_speed()
         printf("start: %d\n", start);
         
     }
-    else start ++;
     if (start >0 && start <NUMBER_OF_MEASUREMENT)
     {
         timediffstab[loop_counter] = timediffs;
@@ -50,7 +48,7 @@ void check_Anemometer_speed()
         start++;
         loop_counter++;
     }
-    else
+    else if(start >= NUMBER_OF_MEASUREMENT)
     {
         timediffstab[loop_counter] = timediffs;
         timediffnstab[loop_counter] = timediffns/1000; //nano to uicro
@@ -61,24 +59,23 @@ void check_Anemometer_speed()
             printf("timediffnstab[i]; %d\n", timediffnstab[i]);
         }
         averagemeasurementtime = ((float) sumoftimemesurements + ((float)sumoftimemesurementns / 1000000))/NUMBER_OF_MEASUREMENT;
+        averagewindspeed = (1/averagemeasurementtime) *2.4f;
         printf("average time %f\n", averagemeasurementtime);
+        printf("average speed %f\n", averagewindspeed);
         loop_counter++;
     }
-
+    else start ++;
+    delay(15);
     lastCall = thiscall;
 }
 
 
 void Anemometer_setup()
 {
-    signal(SIGINT, cleanup);
-    signal(SIGTERM, cleanup);
-    signal(SIGHUP, cleanup);
-
     wiringPiSetupGpio();
 
     pinMode(ANE_PIN, INPUT);                //TODO: Check this
-    pullUpDnControl(ANE_PIN, PUD_OFF); 
+    pullUpDnControl(ANE_PIN, PUD_UP); 
 
 }
 
