@@ -1,3 +1,7 @@
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+#include <inttypes.h>
+#include <math.h>
 #include <stdio.h>
 
 #define AccelerometrID 0x68

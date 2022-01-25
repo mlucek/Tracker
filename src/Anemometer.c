@@ -1,7 +1,6 @@
 #include "Anemometer.h"
 
 
-
 void cleanup(int signo)
 {
     pinMode(ANE_PIN, OUTPUT);                //TODO: Check this
@@ -56,17 +55,20 @@ void check_Anemometer_speed()
         {
             sumoftimemesurements += timediffstab[i];
             sumoftimemesurementns += timediffnstab[i];
-            printf("timediffnstab[i]; %d\n", timediffnstab[i]);
         }
         averagemeasurementtime = ((float) sumoftimemesurements + ((float)sumoftimemesurementns / 1000000))/NUMBER_OF_MEASUREMENT;
         averagewindspeed = (1/averagemeasurementtime) *2.4f;
-        printf("average time %f\n", averagemeasurementtime);
-        printf("average speed %f\n", averagewindspeed);
         loop_counter++;
     }
     else start ++;
     delay(15);
     lastCall = thiscall;
+    printf("averagewindspeed %f\n", averagewindspeed);
+    printf("workflag = %d\n", WORK_FLAG);
+    if (averagewindspeed > 30)
+    {
+        WORK_FLAG = 1;
+    }
 }
 
 
@@ -76,7 +78,6 @@ void Anemometer_setup()
 
     pinMode(ANE_PIN, INPUT);                //TODO: Check this
     pullUpDnControl(ANE_PIN, PUD_UP); 
-
 }
 
 

@@ -10,6 +10,8 @@
 //#include <inttypes.h>
 
 
+extern int WORK_FLAG;
+
 
 // Pins
 #define ANE_PIN 25 

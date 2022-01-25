@@ -1,7 +1,3 @@
-#include <wiringPi.h>
-#include <wiringPiI2C.h>
-#include <inttypes.h>
-#include <math.h>
 #include "AccelerometerMPU9250A.h"
 
 int fd;
@@ -105,22 +101,21 @@ double MPU9520A_READ_AXIS_IN_G(int Axie)
 
 double MPU9520A_YZ_AXIS_IN_DEGREE()
 {
-    long double x = 0;
     long double y = 0;
-    x = MPU9520A_READ_AXIS_IN_G(AXIE_X);
     y = MPU9520A_READ_AXIS_IN_G(AXIE_Y);
-    double z = MPU9520A_READ_AXIS_IN_G(AXIE_Z);
-    if (x >= 1) x = 1;
     if (y >= 1) y = 1;
-    if (z >= 1) z = 1;
     double sinalfa = asin(y);
     double in_degree = ((sinalfa *360)/(2*M_PI));
-    printf("Kąt w stopniach sin: %f\n", in_degree);
-    double cosalfa = acos(y);
-    double in_degree2 = ((cosalfa *360)/(2*M_PI));
-    printf("Kąt w stopniach cos: %f\n", in_degree2);
-    double tgalfa = atan2(y, z);
-    double in_degree3 = ((tgalfa *360)/(2*M_PI));
-    printf("Kąt w stopniach tg: %f\n", in_degree3);
-    return in_degree3;
+    return in_degree;
 }
+    // long double x = 0;
+    // x = MPU9520A_READ_AXIS_IN_G(AXIE_X);
+    // double z = MPU9520A_READ_AXIS_IN_G(AXIE_Z);
+    // if (x >= 1) x = 1;
+    // if (z >= 1) z = 1;
+//     printf("Kąt w stopniach sin: %f\n", in_degree);
+//     double tgalfa = atan2(y, z);
+//     double in_degree2 = ((tgalfa *360)/(2*M_PI));
+//     printf("Kąt w stopniach tg: %f\n", in_degree2);
+//     return in_degree2;
+// }

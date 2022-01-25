@@ -20,41 +20,25 @@ void togglepin(int pinNumber)
 void EngineDriver_Init()
 {
     wiringPiSetupGpio();
-    pinMode(FirstEnginePul, OUTPUT); //physical 11
-    digitalWrite(FirstEnginePul, LOW);
+    pinMode(15, OUTPUT); //physical 11
+    digitalWrite(FirstEnginePul, HIGH);
     pinMode(FirstEngineDir, OUTPUT); //physical 31
-    digitalWrite(FirstEngineDir, LOW);
+    digitalWrite(FirstEngineDir, HIGH);
     pinMode(FirstEngineEnable, OUTPUT); //physical 35
-    digitalWrite(FirstEngineEnable, LOW);
-    pinMode(SecondEnginePul, OUTPUT); //physical 24
-    digitalWrite(SecondEnginePul, LOW);
-    pinMode(SecondEngineDir, OUTPUT); //physical 26
-    digitalWrite(SecondEngineDir, LOW);
-    pinMode(FirstEngineEnable, OUTPUT); //physical 36
-    digitalWrite(SecondEngineEnable, LOW);
+    digitalWrite(FirstEngineEnable, HIGH);
 }
 
-void ChangeDirection(int Engine)
+void ChangeDirection()
 {
-    if (Engine == 0)
-    {
-        printf("pierwszy silnik!\n");
-        togglepin(FirstEngineDir);
-    }
-    else if (Engine == 1)
-    {
-        printf("Drugi silnik!\n");
-        togglepin(SecondEngineDir);
-    }
-    else
-        printf("bład :/\n");
+    printf("pierwszy silnik!\n");
+    togglepin(FirstEngineDir);
 }
 
 void RunFirstEngine(float angle) //TODO: Check if this code working in normal engine
 {
-    int Steps = (angle / 360) * STEPINCYCLE;
+    int Steps = (angle / 360) * STEPINCYCLE *2 * 2.1;
     printf("Ilość krókw = %d\n", Steps);
-    for (size_t i = 0; i < 400; i++)
+    for (size_t i = 0; i < Steps; i++)
     {
         togglepin(FirstEnginePul);
         delay(75); //To turn around ~30 sec
@@ -63,32 +47,12 @@ void RunFirstEngine(float angle) //TODO: Check if this code working in normal en
 
 void Disable_EnableEngine(int Engine, int Availability)
 {
-    if (Engine == 0)
+    if (Availability == Disenable)
     {
-        printf("pierwszy silnik!\n");
-        if (Availability == Disenable)
-        {
-            digitalWrite(FirstEngineEnable, LOW);
-        }
-        else if (Availability == Enable)
-        {
-            digitalWrite(FirstEngineEnable, HIGH);
-        }
-        else printf("fail\n");
+        digitalWrite(FirstEngineEnable, LOW);
     }
-    else if (Engine == 1)
+    else if (Availability == Enable)
     {
-        printf("Drugi silnik!\n");
-        if (Availability == Disenable)
-        {
-            digitalWrite(SecondEngineEnable, LOW);
-        }
-        else if (Availability == Enable)
-        {
-            digitalWrite(SecondEngineEnable, HIGH);
-        }
-        else printf("fail\n");
+        digitalWrite(FirstEngineEnable, HIGH);
     }
-    else
-        printf("bład :/\n");
 }
